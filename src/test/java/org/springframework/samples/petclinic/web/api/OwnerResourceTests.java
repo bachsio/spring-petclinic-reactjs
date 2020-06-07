@@ -44,9 +44,9 @@ public class OwnerResourceTests {
 				.accept(MediaType.APPLICATION_JSON)) //
 				.andExpect(status().is4xxClientError()) //
 				.andExpect(content().contentType("application/json")); //
-				
+
 	}
-	
+
 	@Test
 	public void shouldGetOwnerById() throws Exception {
 		given(clinicService.findOwnerById(1)).willReturn(setupOwners().get(1));
@@ -54,12 +54,12 @@ public class OwnerResourceTests {
 		mvc.perform(get("/api/owner/1") //
 				.accept(MediaType.APPLICATION_JSON)) //
 				.andExpect(status().isOk()) //
-				.andExpect(content().contentType("application/json;charset=UTF-8")) //
+				.andExpect(content().contentType("application/json")) //
 				.andExpect(jsonPath("$.id").value(1)) //
 				.andExpect(jsonPath("$.city").value("Mainz")) //
 				.andExpect(jsonPath("$.lastName").value("Mueck")); //
 	}
-	
+
 	@Test
 	public void shouldFindOwners() throws Exception {
 		final List<Owner> owners = setupOwners();
@@ -68,11 +68,11 @@ public class OwnerResourceTests {
 		mvc.perform(get("/api/owner/list/?lastName=mueller") //
 				.accept(MediaType.APPLICATION_JSON)) //
 		.andExpect(status().isOk())
-		.andExpect(content().contentType("application/json;charset=UTF-8")) //
+		.andExpect(content().contentType("application/json")) //
 		.andExpect(jsonPath("$.[0].id").value(0))
 		.andExpect(jsonPath("$.[1].id").value(2)); //
 	}
-	
+
 
 	@Test
 	public void shouldCreateOwner() throws Exception {
@@ -91,16 +91,16 @@ public class OwnerResourceTests {
 		ObjectMapper mapper = new ObjectMapper();
 		String ownerAsJsonString = mapper.writeValueAsString(newOwner);
 		newOwner.setId(666);
-		String newOwnerAsJsonString = 
+		String newOwnerAsJsonString =
 				mapper.writeValueAsString(newOwner);
-		
+
 		mvc.perform(post("/api/owner") //
 				.content(ownerAsJsonString).accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)) //
 				.andExpect(status().isCreated())
 				.andExpect(content().json(newOwnerAsJsonString))
 		;
 	}
-	
+
 	@Test
 	public void shouldReturnBindingErrors() throws Exception {
 
@@ -110,13 +110,13 @@ public class OwnerResourceTests {
 
 		ObjectMapper mapper = new ObjectMapper();
 		String ownerAsJsonString = mapper.writeValueAsString(newOwner);
-		
+
 		mvc.perform(post("/api/owner") //
 				.content(ownerAsJsonString).accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)) //
 				.andExpect(status().isUnprocessableEntity())
 				.andExpect(content().contentType("application/json")) //
 				.andExpect(jsonPath("$.fieldErrors.lastName").isNotEmpty()) //
-				
+
 		;
 	}
 
